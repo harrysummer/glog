@@ -298,7 +298,7 @@ static GLogColor SeverityToColor(LogSeverity severity) {
   return color;
 }
 
-#ifdef OS_WINDOWS
+#if defined(OS_WINDOWS) && !defined(__MINGW32__)
 
 // Returns the character attribute for the given color.
 WORD GetColorAttribute(GLogColor color) {
@@ -684,9 +684,10 @@ static void ColoredWriteToStderr(LogSeverity severity,
   // exit code, and cerr may be partially or fully destroyed by then.
   if (COLOR_DEFAULT == color) {
     fwrite(message, len, 1, stderr);
+    fflush(stderr);
     return;
   }
-#ifdef OS_WINDOWS
+#if defined(OS_WINDOWS) && !defined(__MINGW32__)
   const HANDLE stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
 
   // Gets the current text color.
@@ -708,6 +709,7 @@ static void ColoredWriteToStderr(LogSeverity severity,
   fprintf(stderr, "\033[0;3%sm", GetAnsiColorCode(color));
   fwrite(message, len, 1, stderr);
   fprintf(stderr, "\033[m");  // Resets the terminal to default.
+  fflush(stderr);
 #endif  // OS_WINDOWS
 }
 
@@ -715,6 +717,7 @@ static void WriteToStderr(const char* message, size_t len) {
   // Avoid using cerr from this module since we may get called during
   // exit code, and cerr may be partially or fully destroyed by then.
   fwrite(message, len, 1, stderr);
+  fflush(stderr);
 }
 
 inline void LogDestination::MaybeLogToStderr(LogSeverity severity,
