@@ -48,7 +48,7 @@ include (DetermineGflagsNamespace)
 set (CMAKE_THREAD_PREFER_PTHREAD 1)
 
 if (WITH_GFLAGS)
-  find_package (gflags)
+    find_package (GFlags)
 
   if (gflags_FOUND)
     set (HAVE_LIB_GFLAGS 1)
@@ -395,7 +395,7 @@ if (gflags_FOUND)
 
   if (NOT BUILD_SHARED_LIBS)
     # Don't use __declspec(dllexport|dllimport) if this is a static build
-    targeT_compile_definitions (glog PUBLIC GFLAGS_DLL_DECLARE_FLAG= GFLAGS_DLL_DEFINE_FLAG=)
+    target_compile_definitions (glog PUBLIC GFLAGS_DLL_DECLARE_FLAG= GFLAGS_DLL_DEFINE_FLAG=)
   endif (NOT BUILD_SHARED_LIBS)
 endif (gflags_FOUND)
 
